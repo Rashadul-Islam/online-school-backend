@@ -39,4 +39,27 @@ const admin = (req, res, next) => {
   }
 }
 
-export { protect, admin }
+const check = asyncHandler(async (req, res, next) => {
+
+  if (req.body.email && req.body.password) {
+    try {
+
+      const user = await User.findOne({ email: req.body.email })
+      if (user.ban === 0) {
+        next()
+      }
+      else {
+        res.status(401)
+        throw new Error('Not authorized')
+      }
+
+    } catch (error) {
+      console.error(error)
+      res.status(401)
+      throw new Error('Not authorized')
+    }
+  }
+})
+
+
+export { protect, admin, check }
