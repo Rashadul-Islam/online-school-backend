@@ -7,6 +7,8 @@ import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import connectDB from "./config/db.js";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
+import tutorRoutes from "./routes/tutorRoutes.js";
+import studentRoutes from "./routes/studentRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -27,9 +29,11 @@ if (process.env.NODE_ENV === "development") {
 app.use(express.json());
 
 app.use("/api/users", userRoutes);
+app.use("/api/tutors", tutorRoutes);
+app.use("/api/students", studentRoutes);
 
 
-app.use("/backend/uploads", express.static("backend/uploads"));
+app.use("/uploads", express.static("uploads"));
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));

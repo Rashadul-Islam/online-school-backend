@@ -1,7 +1,7 @@
 import path from "path";
 import multer from "multer";
 
-const Upload_Folder = "backend/uploads/";
+const Upload_Folder = "uploads/";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -23,14 +23,13 @@ const storage = multer.diskStorage({
 var upload = multer({
     storage: storage,
     limits: {
-        fieldSize: 3000000,
+        fieldSize: 1000000,
     },
     fileFilter: (req, file, cb) => {
         if (
             file.mimetype === "image/png" ||
             file.mimetype === "image/jpg" ||
-            file.mimetype === "image/jpeg" ||
-            file.mimetype === "application/pdf"
+            file.mimetype === "image/jpeg"
         ) {
             cb(null, true);
         } else {
