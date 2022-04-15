@@ -9,6 +9,9 @@ import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
 import tutorRoutes from "./routes/tutorRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
+import courseRoutes from "./routes/courseRoutes.js";
+import mcqRoutes from "./routes/mcqRoutes.js";
+import enrollRoutes from "./routes/enrollRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -31,6 +34,9 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/tutors", tutorRoutes);
 app.use("/api/students", studentRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/mcqs", mcqRoutes);
+app.use("/api/enrolled", enrollRoutes);
 
 
 app.use("/uploads", express.static("uploads"));

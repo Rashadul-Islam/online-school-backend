@@ -4,7 +4,7 @@ const tutorSchema = mongoose.Schema(
     {
         user: {
             type: String,
-            required: true
+            required: true,
         },
         name: {
             type: String,

@@ -1,11 +1,12 @@
-import asyncHandler from 'express-async-handler'
-import generateToken from '../utils/generateToken.js'
-import User from '../models/userModel.js'
+import asyncHandler from "express-async-handler";
+import generateToken from "../utils/generateToken.js";
+import User from "../models/userModel.js";
+import bcrypt from 'bcryptjs'
 
 const authUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body
+  const { email, password } = req.body;
 
-  const user = await User.findOne({ email })
+  const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
     res.json({
@@ -14,30 +15,29 @@ const authUser = asyncHandler(async (req, res) => {
       role: user.role,
       ban: user.ban,
       token: generateToken(user._id),
-    })
+    });
   } else {
-    res.status(401)
-    throw new Error('Invalid email or password')
+    res.status(401);
+    throw new Error("Invalid email or password");
   }
-})
-
+});
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { role, email, password } = req.body
+  const { role, email, password } = req.body;
 
-  const userExists = await User.findOne({ email })
+  const userExists = await User.findOne({ email });
 
   if (userExists) {
-    res.status(400)
-    throw new Error('User already exists')
+    res.status(400);
+    throw new Error("User already exists");
   }
 
   const user = await User.create({
     role,
     email,
     password,
-    ban: 0
-  })
+    ban: 0,
+  });
 
   if (user) {
     res.status(201).json({
@@ -46,14 +46,41 @@ const registerUser = asyncHandler(async (req, res) => {
       email: user.email,
       ban: user.ban,
       token: generateToken(user._id),
-    })
+    });
   } else {
-    res.status(400)
-    throw new Error('Invalid user data')
+    res.status(400);
+    throw new Error("Invalid user data");
   }
-})
+});
 
-export {
-  authUser,
-  registerUser
-}
+const changePassword = asyncHandler(async (req, res) => {
+  const { current, newpass } = req.body;
+
+  const user = await User.findOne({ _id: req.params.id });
+
+  if (user && (await user.matchPassword(current))) {
+    let storePass = await bcrypt.hash(newpass, 10);
+
+    const setNew = await User.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        $set: {
+          password: storePass,
+        },
+      },
+    );
+    if (setNew) {
+      res.status(201).json({
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(401);
+      throw new Error("Invalid email or password");
+    }
+  } else {
+    res.status(401);
+    throw new Error("Invalid email or password");
+  }
+});
+
+export { authUser, registerUser, changePassword };
